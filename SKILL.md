@@ -2,36 +2,32 @@
 name: webapp-test-code-generator
 description: |
   Generate executable test code from webapp-test-docs-writer test documents. Converts TC-* test cases to Playwright/Jest test files with proper assertions, fixtures, and test data setup.
-  webapp-test-docs-writer 테스트 문서에서 실행 가능한 테스트 코드 생성. TC-* 테스트 케이스를 Playwright/Jest 테스트 파일로 변환.
-  Triggers: "테스트 코드 생성", "테스트 구현", "test code", "implement tests", "generate tests", "TC-* 구현", "테스트 문서로 코드 작성"
+  Triggers: "test code", "implement tests", "generate tests", "테스트 코드 생성", "테스트 구현", "TC-* 구현"
 ---
 
 # Webapp Test Code Generator
 
 Generate executable test code from webapp-test-docs-writer test documents.
-webapp-test-docs-writer 테스트 문서에서 실행 가능한 테스트 코드 생성.
 
-## Language / 언어
+## Language Detection
 
 Detect user's language and respond accordingly.
 - English request → English comments/output
-- 한글 요청 → 한글 주석/출력
+- Korean request → Korean comments/output
 
 ## Workflow
 
 ```
 1. Parse Test Doc → 2. Detect Framework → 3. Generate Code → 4. Write Files
-   문서 파싱          프레임워크 감지        코드 생성          파일 작성
 ```
 
-## Step 1: Parse Test Document / 문서 파싱
+## Step 1: Parse Test Document
 
 Read the test document (Markdown file or context) and extract:
-테스트 문서를 읽고 다음을 추출:
 
-| Element / 요소 | Source / 출처 | Usage / 용도 |
-|---------------|---------------|--------------|
-| Test ID | `TC-[TYPE]-[NNN]` | Test name / 테스트명 |
+| Element | Source | Usage |
+|---------|--------|-------|
+| Test ID | `TC-[TYPE]-[NNN]` | Test name |
 | Title | `## TC-*: [Title]` | describe/test name |
 | Preconditions | Preconditions section | beforeEach setup |
 | Test Steps | Steps table | Test actions |
@@ -39,7 +35,7 @@ Read the test document (Markdown file or context) and extract:
 | Test Data | JSON block | Test fixtures |
 | Test Type | TYPE in ID | File location |
 
-### Expected Input Format / 입력 형식
+### Expected Input Format
 
 ```markdown
 ## TC-API-001: User login with valid credentials
@@ -58,24 +54,23 @@ Read the test document (Markdown file or context) and extract:
 | 3 | Verify token validity | Token is valid JWT |
 ```
 
-## Step 2: Detect Framework / 프레임워크 감지
+## Step 2: Detect Framework
 
 Check project for test framework configuration:
-프로젝트에서 테스트 프레임워크 설정 확인:
 
-| Signal / 신호 | Framework | File Pattern |
-|--------------|-----------|--------------|
+| Signal | Framework | File Pattern |
+|--------|-----------|--------------|
 | `playwright.config.ts` | Playwright | `*.spec.ts` |
 | `jest.config.*` | Jest | `*.test.ts` |
 | `vitest.config.*` | Vitest | `*.test.ts` |
 | TC-E2E-*, TC-API-* | Playwright | E2E/API tests |
 | TC-UNIT-*, TC-INT-* | Jest/Vitest | Unit/Integration |
 
-**Default mapping / 기본 매핑:**
+**Default mapping:**
 - `E2E`, `API`, `SEC` → Playwright
 - `UNIT`, `INT` → Jest (or Vitest if configured)
 
-## Step 3: Generate Code / 코드 생성
+## Step 3: Generate Code
 
 ### Playwright Template (E2E/API)
 
@@ -120,7 +115,7 @@ describe('[Feature] - [Scenario]', () => {
 });
 ```
 
-### Code Generation Rules / 코드 생성 규칙
+### Code Generation Rules
 
 1. **Test ID → Test Name**: `TC-API-001` → `test('TC-API-001: ...')`
 2. **Preconditions → beforeEach**: Setup code in beforeEach hook
@@ -128,7 +123,7 @@ describe('[Feature] - [Scenario]', () => {
 4. **Expected Results → expect()**: Each expected result = assertion
 5. **Test Data → Fixtures**: Inline data or separate fixture file
 
-### Mapping Test Steps to Code / 단계-코드 매핑
+### Mapping Test Steps to Code
 
 | Step Pattern | Playwright | Jest |
 |-------------|------------|------|
@@ -139,9 +134,9 @@ describe('[Feature] - [Scenario]', () => {
 | Check [condition] | `expect(...).toBe/toHave()` | `expect(...).toBe/toEqual()` |
 | Wait for [element/response] | `page.waitFor*()` | `waitFor()` |
 
-## Step 4: Write Files / 파일 작성
+## Step 4: Write Files
 
-### File Naming Convention / 파일 명명 규칙
+### File Naming Convention
 
 | Test Type | Directory | File Name |
 |-----------|-----------|-----------|
@@ -150,7 +145,7 @@ describe('[Feature] - [Scenario]', () => {
 | Unit | `tests/unit/` or `__tests__/` | `[feature].test.ts` |
 | Integration | `tests/integration/` | `[feature].integration.test.ts` |
 
-### Output Structure / 출력 구조
+### Output Structure
 
 ```
 tests/
@@ -164,9 +159,9 @@ tests/
     └── test-data.json         # Shared test data
 ```
 
-## Quick Reference / 빠른 참조
+## Quick Reference
 
-### Assertion Mapping / 검증 매핑
+### Assertion Mapping
 
 | Expected Result Pattern | Playwright | Jest |
 |------------------------|------------|------|
@@ -177,7 +172,7 @@ tests/
 | Response has [field] | `expect(body).toHaveProperty(field)` | `expect(obj).toHaveProperty()` |
 | Error message shown | `expect(locator).toHaveText(msg)` | `expect(screen.getByText())` |
 
-### Common Patterns / 공통 패턴
+### Common Patterns
 
 **API Test with Auth:**
 ```typescript
@@ -207,10 +202,9 @@ test('TC-E2E-001: Submit contact form', async ({ page }) => {
 });
 ```
 
-## Execution / 실행
+## Execution
 
 After generating test files, provide run commands:
-테스트 파일 생성 후 실행 명령어 제공:
 
 ```bash
 # Playwright
