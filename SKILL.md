@@ -21,6 +21,24 @@ Detect user's language and respond accordingly.
 1. Parse Test Doc → 2. Detect Framework → 3. Generate Code → 4. Write Files
 ```
 
+## Step 0: Dedup Check (MANDATORY — before any code generation)
+
+Before generating test code, perform these checks:
+
+1. **Read project dedup policy**: If `docs/testing/TEST_DEDUP_POLICY.md` exists, read and enforce it
+2. **Search existing tests**: `grep -r "endpoint_or_function" tests/ -l` for each target
+3. **Layer ownership check**: Verify the test belongs in the correct layer
+   - Pure function → unit only | API endpoint → api only | Browser flow → e2e only
+   - Auth 401/403 → per-feature api file only (NOT bulk security files)
+4. **If existing file found**: Add TC to that file instead of creating a new file
+5. **Prohibited patterns — do NOT generate**:
+   - `expect(true).toBeTruthy()` placeholders
+   - Padding assertions (`typeof`/`toBeDefined()` after value is already checked)
+   - Re-export existence checks (`typeof fn === 'function'`)
+   - `request`-only tests in E2E directory (use api layer)
+   - Temp/verify files (`verify-*.spec.ts`)
+   - Tests for unimplemented features with skip/console.log workarounds
+
 ## Step 1: Parse Test Document
 
 Read the test document (Markdown file or context) and extract:
