@@ -3,6 +3,7 @@ name: webapp-test-code-generator
 description: |
   Generate executable test code from webapp-test-docs-writer test documents. Converts TC-* test cases to Playwright/Jest test files with proper assertions, fixtures, and test data setup.
   Triggers: "test code", "implement tests", "generate tests", "테스트 코드 생성", "테스트 구현", "TC-* 구현"
+version: 1.0.0
 ---
 
 # Webapp Test Code Generator
